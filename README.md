@@ -27,16 +27,16 @@ Package release artifacts and generate checksums for GitHub releases.
 
 ## Inputs
 
-| Input | Description | Default |
-|-------|-------------|---------|
-| `artifacts-dir` | Directory containing build artifacts | `dist` |
+| Input           | Description                          | Default |
+| --------------- | ------------------------------------ | ------- |
+| `artifacts-dir` | Directory containing build artifacts | `dist`  |
 
 ## Outputs
 
-| Output | Description |
-|--------|-------------|
-| `assets` | Packaged assets as JSON array with metadata |
-| `checksums` | SHA256 checksums in standard format |
+| Output      | Description                                 |
+| ----------- | ------------------------------------------- |
+| `assets`    | Packaged assets as JSON array with metadata |
+| `checksums` | SHA256 checksums in standard format         |
 
 ## Asset JSON Format
 
@@ -78,7 +78,7 @@ sha256sum -c checksums.txt
   id: release
   run: |
     make dist
-    
+
 - name: Package assets
   id: package
   uses: jdfalk/package-assets-action@v1
@@ -92,11 +92,11 @@ sha256sum -c checksums.txt
       dist/*
     body: |
       ## Release Assets
-      
-      | File | Size | SHA256 |
-      |------|------|--------|
-      ${{ fromJson(steps.package.outputs.assets)[0].filename }} | ${{ fromJson(steps.package.outputs.assets)[0].size }} | `${{ fromJson(steps.package.outputs.assets)[0].sha256 }}` |
-      
+
+      | File                                                      | Size                                                  | SHA256                                                    |
+      | --------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------- |
+      | ${{ fromJson(steps.package.outputs.assets)[0].filename }} | ${{ fromJson(steps.package.outputs.assets)[0].size }} | `${{ fromJson(steps.package.outputs.assets)[0].sha256 }}` |
+
       ## Verify Checksums
       \`\`\`bash
       ${{ steps.package.outputs.checksums }}

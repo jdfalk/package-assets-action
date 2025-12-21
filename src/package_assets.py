@@ -42,7 +42,7 @@ def compute_sha256(file_path):
 
 def main():
     artifacts_dir = Path(os.environ.get("ARTIFACTS_DIR", "dist"))
-    
+
     assets = []
     checksums = {}
 
@@ -57,13 +57,13 @@ def main():
         if artifact.is_file():
             rel_path = artifact.relative_to(artifacts_dir)
             sha256 = compute_sha256(artifact)
-            
+
             assets.append({
                 "filename": str(rel_path),
                 "size": artifact.stat().st_size,
                 "sha256": sha256,
             })
-            
+
             checksums[str(rel_path)] = sha256
 
     # Generate checksums file
