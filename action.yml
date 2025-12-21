@@ -1,0 +1,36 @@
+# file: action.yml
+# version: 1.0.0
+# guid: 9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f
+
+name: "Package Release Assets"
+description: "Package release artifacts and generate checksums for GitHub releases"
+author: "jdfalk"
+
+branding:
+  icon: "package"
+  color: "green"
+
+inputs:
+  artifacts-dir:
+    description: "Directory containing build artifacts to package"
+    required: false
+    default: "dist"
+
+outputs:
+  assets:
+    description: "Packaged assets as JSON array with filenames, sizes, and checksums"
+    value: ${{ steps.package.outputs.assets }}
+
+  checksums:
+    description: "SHA256 checksums in standard format (sha256  filename)"
+    value: ${{ steps.package.outputs.checksums }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Package assets
+      id: package
+      shell: python
+      env:
+        ARTIFACTS_DIR: ${{ inputs.artifacts-dir }}
+      run: python "${{ github.action_path }}/src/package_assets.py"
