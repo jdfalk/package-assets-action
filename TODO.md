@@ -1,5 +1,5 @@
 <!-- file: TODO.md -->
-<!-- version: 1.0.0 -->
+<!-- version: 1.0.2 -->
 <!-- guid: d5ecd448-7dfb-4db6-bd03-e34291df755c -->
 
 # TODO - package-assets-action
@@ -40,4 +40,8 @@ Packages and prepares assets for release
 
 ---
 
-*This TODO.md was automatically generated on 2026-01-02*
+<!-- markdownlint-disable MD036 -->
+
+_This TODO.md was automatically generated on 2026-01-02_
+
+<!-- markdownlint-enable MD036 -->
