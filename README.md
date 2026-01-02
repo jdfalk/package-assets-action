@@ -4,7 +4,7 @@ Package release artifacts and generate checksums for GitHub releases.
 
 ## Usage
 
-```yaml
+````yaml
 - name: Build artifacts
   run: make dist
 
@@ -23,7 +23,7 @@ Package release artifacts and generate checksums for GitHub releases.
       ```
       ${{ steps.package.outputs.checksums }}
       ```
-```
+````
 
 ## Inputs
 
@@ -65,6 +65,7 @@ xyz789uvw012...  app.tar.gz
 ```
 
 Verify with:
+
 ```bash
 sha256sum -c checksums.txt
 ```
@@ -122,16 +123,15 @@ sha256sum -c checksums.txt
   uses: softprops/action-gh-release@v1
   with:
     files: dist/**/*
-    body: "${{ steps.package.outputs.checksums }}"
+    body: '${{ steps.package.outputs.checksums }}'
 ```
 
 ## Features
 
-✅ **SHA256 Hashing** - Industry-standard checksums
-✅ **Recursive Discovery** - Finds artifacts in subdirectories
-✅ **File Metadata** - Includes size in JSON output
-✅ **Standard Formats** - Compatible with sha256sum
-✅ **Release Integration** - Easy GitHub release body insertion
+✅ **SHA256 Hashing** - Industry-standard checksums ✅ **Recursive Discovery** -
+Finds artifacts in subdirectories ✅ **File Metadata** - Includes size in JSON
+output ✅ **Standard Formats** - Compatible with sha256sum ✅ **Release
+Integration** - Easy GitHub release body insertion
 
 ## Checksum Verification
 
@@ -147,5 +147,7 @@ sha256sum -c checksums.txt
 
 ## Related Actions
 
-- [generate-version-action](https://github.com/jdfalk/generate-version-action) - Generate semantic versions
-- [release-strategy-action](https://github.com/jdfalk/release-strategy-action) - Determine release strategy
+- [generate-version-action](https://github.com/jdfalk/generate-version-action) -
+  Generate semantic versions
+- [release-strategy-action](https://github.com/jdfalk/release-strategy-action) -
+  Determine release strategy
