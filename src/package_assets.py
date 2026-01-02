@@ -58,19 +58,18 @@ def main():
             rel_path = artifact.relative_to(artifacts_dir)
             sha256 = compute_sha256(artifact)
 
-            assets.append({
-                "filename": str(rel_path),
-                "size": artifact.stat().st_size,
-                "sha256": sha256,
-            })
+            assets.append(
+                {
+                    "filename": str(rel_path),
+                    "size": artifact.stat().st_size,
+                    "sha256": sha256,
+                }
+            )
 
             checksums[str(rel_path)] = sha256
 
     # Generate checksums file
-    checksums_content = "\n".join(
-        f"{sha}  {filename}"
-        for filename, sha in checksums.items()
-    )
+    checksums_content = "\n".join(f"{sha}  {filename}" for filename, sha in checksums.items())
 
     write_output("assets", json.dumps(assets, separators=(",", ":")))
     write_output("checksums", checksums_content)
