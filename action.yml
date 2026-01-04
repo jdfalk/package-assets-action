@@ -1,5 +1,5 @@
 # file: action.yml
-# version: 1.1.0
+# version: 1.0.1
 # guid: 9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f
 
 name: "Package Release Assets"
@@ -22,7 +22,7 @@ inputs:
   docker-image:
     description: "Docker image reference (tag or digest) to use when use-docker is true"
     required: false
-    default: "ghcr.io/jdfalk/package-assets-action:main"
+    default: "ghcr.io/jdfalk/package-assets-action:v1.0.1@sha256:7623b6dff27e9ccd29dceb45d10872135808f55035e8d0a0c79467d62d104692"
 
 outputs:
   assets:
