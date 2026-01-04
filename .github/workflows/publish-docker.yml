@@ -70,33 +70,7 @@ jobs:
           VERSION_NO_PREFIX: ${{ steps.version.outputs.version_no_prefix }}
         run: |
           set -euo pipefail
-          python - <<'PY'
-            from pathlib import Path
-            import re
-            import os
-
-            action = Path("action.yml")
-            text = action.read_text()
-
-            image_ref = f'{os.environ["IMAGE_NAME"]}:{os.environ["IMAGE_TAG"]}@{os.environ["IMAGE_DIGEST"]}'
-            version_no_prefix = os.environ["VERSION_NO_PREFIX"]
-
-            text = re.sub(
-                r'# version: [0-9]+\.[0-9]+\.[0-9]+',
-                f'# version: {version_no_prefix}',
-                text,
-                count=1,
-            )
-
-            text = re.sub(
-                r'default:\s*"ghcr\.io/jdfalk/package-assets-action:[^"]+"',
-                f'default: "{image_ref}"',
-                text,
-                count=1,
-            )
-
-            action.write_text(text)
-          PY
+          python -c "from pathlib import Path; import os, re; action=Path('action.yml'); text=action.read_text(); image_ref=f\"{os.environ['IMAGE_NAME']}:{os.environ['IMAGE_TAG']}@{os.environ['IMAGE_DIGEST']}\"; version_no_prefix=os.environ['VERSION_NO_PREFIX']; text=re.sub(r'# version: [0-9]+\\.[0-9]+\\.[0-9]+', f'# version: {version_no_prefix}', text, count=1); text=re.sub(r'default:\\s*\\\"ghcr\\.io/jdfalk/package-assets-action:[^\\\"]+\\\"', f'default: \\\"{image_ref}\\\"', text, count=1); action.write_text(text)"
 
       - name: Commit and tag release
         env:
