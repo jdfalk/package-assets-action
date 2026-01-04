@@ -1,6 +1,14 @@
 # Package Assets Action
 
-Package release artifacts and generate checksums for GitHub releases.
+Package release artifacts and generate checksums for GitHub releases with
+optional dockerized execution.
+
+## Features
+
+- ✅ Packages artifacts in the given directory and emits JSON metadata
+- ✅ Generates sha256 checksum list suitable for `sha256sum -c`
+- ✅ Safe defaults when artifacts are missing (empty outputs)
+- ✅ Optional docker execution via GHCR image
 
 ## Usage
 
@@ -25,11 +33,23 @@ Package release artifacts and generate checksums for GitHub releases.
       ```
 ````
 
+### Force Docker Execution
+
+```yaml
+- uses: jdfalk/package-assets-action@v1
+  id: package
+  with:
+    use-docker: true
+    docker-image: ghcr.io/jdfalk/package-assets-action:main
+```
+
 ## Inputs
 
-| Input           | Description                          | Default |
-| --------------- | ------------------------------------ | ------- |
-| `artifacts-dir` | Directory containing build artifacts | `dist`  |
+| Input           | Description                                                      | Default                                     |
+| --------------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| `artifacts-dir` | Directory containing build artifacts                             | `dist`                                      |
+| `use-docker`    | Run the action inside the published container image              | `false`                                     |
+| `docker-image`  | Docker image reference (tag or digest) when `use-docker` is true | `ghcr.io/jdfalk/package-assets-action:main` |
 
 ## Outputs
 
@@ -59,7 +79,7 @@ Package release artifacts and generate checksums for GitHub releases.
 
 Compatible with `sha256sum` command:
 
-```
+```text
 abc123def456...  app-linux-amd64
 xyz789uvw012...  app.tar.gz
 ```

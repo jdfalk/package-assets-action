@@ -1,0 +1,122 @@
+# file: .github/workflows/publish-docker.yml
+# version: 1.0.0
+# guid: c3d0e8c2-0b61-4e74-a694-9a6c2c1d6df7
+
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+
+      - name: Log in to GHCR
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute next version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          base="${latest_tag#v}"
+          IFS='.' read -r major minor patch <<<"$base"
+          patch=$((patch + 1))
+          next="v${major}.${minor}.${patch}"
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+          echo "version_no_prefix=${next#v}" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/${{ github.repository }}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.version.outputs.image }}:${{ steps.version.outputs.version }}
+            ${{ steps.version.outputs.image }}:${{ github.sha }}
+            ${{ steps.version.outputs.image }}:main
+
+      - name: Update action defaults with digest
+        env:
+          IMAGE_NAME: ${{ steps.version.outputs.image }}
+          IMAGE_TAG: ${{ steps.version.outputs.version }}
+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
+          VERSION_NO_PREFIX: ${{ steps.version.outputs.version_no_prefix }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+            from pathlib import Path
+            import re
+            import os
+
+            action = Path("action.yml")
+            text = action.read_text()
+
+            image_ref = f'{os.environ["IMAGE_NAME"]}:{os.environ["IMAGE_TAG"]}@{os.environ["IMAGE_DIGEST"]}'
+            version_no_prefix = os.environ["VERSION_NO_PREFIX"]
+
+            text = re.sub(
+                r'# version: [0-9]+\.[0-9]+\.[0-9]+',
+                f'# version: {version_no_prefix}',
+                text,
+                count=1,
+            )
+
+            text = re.sub(
+                r'default:\s*"ghcr\.io/jdfalk/package-assets-action:[^"]+"',
+                f'default: "{image_ref}"',
+                text,
+                count=1,
+            )
+
+            action.write_text(text)
+          PY
+
+      - name: Commit and tag release
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add action.yml
+          git commit -m "chore: publish docker image $VERSION"
+
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists; skipping tag creation."
+          else
+            git tag -a "$VERSION" -m "Release $VERSION"
+          fi
+
+          git push origin HEAD:main
+          git push origin "$VERSION" || true

@@ -14,7 +14,9 @@ and this project adheres to
 
 ### Added
 
-- Initial release of package-assets-action
+- Dockerized execution path controlled by `use-docker`/`docker-image`
+- Automated GHCR publish workflow with digest pinning and tag bump
+- README updated with docker usage and input/output tables
 
 ### Changed
 

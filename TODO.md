@@ -12,10 +12,11 @@ Packages and prepares assets for release
 
 ### High Priority
 
-- [ ] Review and update README.md with current functionality
-- [ ] Ensure all inputs/outputs are documented in action.yml
-- [ ] Add usage examples for common scenarios
+- [x] Review and update README.md with current functionality
+- [x] Ensure all inputs/outputs are documented in action.yml
+- [x] Add usage examples for common scenarios (host + docker)
 - [ ] Verify CI workflows are passing
+- [ ] Add GHCR publish workflow for docker image with digest pinning
 
 ### Medium Priority
 

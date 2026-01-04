@@ -1,5 +1,5 @@
 # file: action.yml
-# version: 1.0.1
+# version: 1.1.0
 # guid: 9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f
 
 name: "Package Release Assets"
@@ -15,21 +15,62 @@ inputs:
     description: "Directory containing build artifacts to package"
     required: false
     default: "dist"
+  use-docker:
+    description: "Run inside the prebuilt Docker image"
+    required: false
+    default: "false"
+  docker-image:
+    description: "Docker image reference (tag or digest) to use when use-docker is true"
+    required: false
+    default: "ghcr.io/jdfalk/package-assets-action:main"
 
 outputs:
   assets:
     description: "Packaged assets as JSON array with filenames, sizes, and checksums"
-    value: ${{ steps.package.outputs.assets }}
+    value: ${{ steps.package.outputs.assets || steps.package-docker.outputs.assets }}
 
   checksums:
     description: "SHA256 checksums in standard format (sha256  filename)"
-    value: ${{ steps.package.outputs.checksums }}
+    value: ${{ steps.package.outputs.checksums || steps.package-docker.outputs.checksums }}
 
 runs:
   using: "composite"
   steps:
+    - name: Package assets (docker)
+      id: package-docker
+      if: inputs.use-docker == 'true'
+      shell: bash
+      env:
+        ARTIFACTS_DIR: ${{ inputs.artifacts-dir }}
+        DOCKER_IMAGE: ${{ inputs.docker-image }}
+      run: |
+        set -euo pipefail
+
+        if ! command -v docker >/dev/null 2>&1; then
+          echo "::error::Docker is required when use-docker is true."
+          exit 1
+        fi
+
+        touch "$GITHUB_OUTPUT" "$GITHUB_STEP_SUMMARY"
+
+        if ! docker pull "$DOCKER_IMAGE"; then
+          echo "::warning::Pull failed, building $DOCKER_IMAGE locally."
+          docker build --tag "$DOCKER_IMAGE" "${{ github.action_path }}"
+        fi
+
+        docker run --rm \
+          -e ARTIFACTS_DIR \
+          -e GITHUB_OUTPUT \
+          -e GITHUB_STEP_SUMMARY \
+          -v "$GITHUB_OUTPUT:$GITHUB_OUTPUT" \
+          -v "$GITHUB_STEP_SUMMARY:$GITHUB_STEP_SUMMARY" \
+          -v "${{ github.workspace }}:/repo" \
+          -w /repo \
+          "$DOCKER_IMAGE"
+
     - name: Package assets
       id: package
+      if: inputs.use-docker != 'true'
       shell: bash
       env:
         ARTIFACTS_DIR: ${{ inputs.artifacts-dir }}
