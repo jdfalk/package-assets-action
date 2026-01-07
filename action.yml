@@ -22,7 +22,7 @@ inputs:
   docker-image:
     description: "Docker image reference (tag or digest) to use when use-docker is true"
     required: false
-    default: "ghcr.io/jdfalk/package-assets-action:v1.0.1@sha256:63776a228b86fef1954729ed175ba58b5087c8c0a0bf3a8e701947520e14f058"
+    default: "ghcr.io/jdfalk/package-assets-action:v1.0.1@sha256:fb963750eb1fb59c61c74ac0200409d69ef70edaf1d34edba03d1da20485f2d0"
 
 outputs:
   assets:
