@@ -1,5 +1,5 @@
 # file: .github/workflows/publish-docker.yml
-# version: 1.0.0
+# version: 1.0.2
 # guid: c3d0e8c2-0b61-4e74-a694-9a6c2c1d6df7
 
 name: Build and Publish Docker Image
@@ -21,15 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # 8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           fetch-depth: 0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # 8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
 
       - name: Log in to GHCR
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # 5e57cd118135c172c3672efd75eb46360885c0ef
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -53,7 +53,7 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # 263435318d21b8e681c14492fe198d362a7d2c83
         with:
           context: .
           push: true
@@ -63,7 +63,7 @@ jobs:
             ${{ steps.version.outputs.image }}:main
 
       - name: Update action defaults with digest
-        uses: jdfalk/update-action-docker-ref-action@v1
+        uses: jdfalk/update-action-docker-ref-action@b3ebb638e6d76ac1804b2f406927ad3a540cee7c # v1
         with:
           image-name: ${{ steps.version.outputs.image }}
           image-tag: ${{ steps.version.outputs.version }}
