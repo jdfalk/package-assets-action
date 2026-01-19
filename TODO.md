@@ -1,6 +1,7 @@
 <!-- file: TODO.md -->
 <!-- version: 1.0.2 -->
 <!-- guid: d5ecd448-7dfb-4db6-bd03-e34291df755c -->
+<!-- last-edited: 2026-01-19 -->
 
 # TODO - package-assets-action
 
