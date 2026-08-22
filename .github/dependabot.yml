@@ -1,39 +1,8 @@
-# Smart Dependabot configuration for bootstrap-package-assets-action.sDYo3T
-# Automatically detected: python, docker, github-actions
+# Smart Dependabot configuration for bootstrap-jft-github-actions.N0GjEH
+# Automatically detected: github-actions
 
 version: 2
 updates:
-- package-ecosystem: pip
-  directory: /
-  schedule:
-    interval: weekly
-    day: tuesday
-    time: "09:00"
-    timezone: America/New_York
-  open-pull-requests-limit: 3
-  commit-message:
-    prefix: python
-    include: scope
-  labels:
-  - dependencies
-  - priority-medium
-  allow:
-  - dependency-type: direct
-  - dependency-type: indirect
-- package-ecosystem: docker
-  directory: /
-  schedule:
-    interval: weekly
-    day: thursday
-    time: "09:00"
-    timezone: America/New_York
-  open-pull-requests-limit: 3
-  commit-message:
-    prefix: docker
-    include: scope
-  labels:
-  - dependencies
-  - priority-low
 - package-ecosystem: github-actions
   directory: /
   schedule:
