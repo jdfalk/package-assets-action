@@ -1,6 +1,7 @@
 # file: .github/workflows/publish-docker.yml
-# version: 1.0.3
+# version: 1.0.4
 # guid: c3d0e8c2-0b61-4e74-a694-9a6c2c1d6df7
+# last-edited: 2026-08-30
 
 name: Build and Publish Docker Image
 
@@ -63,7 +64,7 @@ jobs:
             ${{ steps.version.outputs.image }}:main
 
       - name: Update action defaults with digest
-        uses: jdfalk/update-action-docker-ref-action@b3ebb638e6d76ac1804b2f406927ad3a540cee7c # v1.0.0
+        uses: falkcorp/gha-update-action-docker-ref@b3ebb638e6d76ac1804b2f406927ad3a540cee7c # v1.0.0
         with:
           image-name: ${{ steps.version.outputs.image }}
           image-tag: ${{ steps.version.outputs.version }}
